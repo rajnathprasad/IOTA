@@ -1,36 +1,83 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# IOTA — AI-Powered Technical Interview Platform
 
-## Getting Started
+IOTA is a real-time technical interview platform designed to streamline coding interviews through collaboration, AI assistance, and proctoring.
 
-First, run the development server:
+The platform provides separate interfaces for interviewers and interviewees, enabling live coding, video communication, AI-generated questions, and interview monitoring in a single workspace.
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+## Features
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+### Interviewer Dashboard
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+* Real-time video calling
+* Collaborative code editor
+* AI question generation using Gemini
+* Live chat
+* Proctoring insights
+* Screen sharing
+* Notes and interview management
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+### Interviewee Workspace
 
-## Learn More
+* Distraction-free coding environment
+* Live coding editor
+* Video communication
+* Real-time chat
+* Code execution
+* Question panel
+* Screen sharing
 
-To learn more about Next.js, take a look at the following resources:
+### Proctoring
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+* Face visibility detection
+* Eye tracking and focus monitoring
+* Multiple face detection
+* Tab switching detection
+* Window blur detection
+* Fullscreen monitoring
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+## Tech Stack
 
-## Deploy on Vercel
+### Frontend
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+* Next.js 15
+* TypeScript
+* Tailwind CSS v4
+* shadcn/ui
+* Framer Motion
+* Monaco Editor
+* Zustand
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+### Backend
+
+* Next.js Server Actions
+* Socket.IO
+* Auth.js v5
+* Prisma ORM
+* PostgreSQL (Neon)
+
+### AI & Real-Time
+
+* Gemini API
+* WebRTC
+* MediaPipe FaceMesh
+* Piston API
+
+### Infrastructure
+
+* Cloudinary
+* Resend
+* Vercel
+* Railway
+* Sentry
+
+## Project Goals
+
+* Conduct seamless technical interviews
+* Enable real-time collaboration
+* Improve interviewer productivity using AI
+* Ensure interview integrity through proctoring
+* Provide a modern and responsive user experience
+
+## Status
+
+🚧 Currently under development.

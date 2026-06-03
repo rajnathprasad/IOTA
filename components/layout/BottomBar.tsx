@@ -1,3 +1,7 @@
 export function BottomBar() {
-  return <div>BottomBar</div>;
+  return (
+    <footer className="flex items-center border-t border-border px-6">
+      Bottom Action Bar
+    </footer>
+  );
 }

@@ -1,13 +1,15 @@
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
+import { TopBar } from "@/components/layout/TopBar";
+import { HeroLogo } from "@/components/common/HeroLogo";
 
 export default function HomePage() {
   return (
-    <main className="min-h-screen bg-background text-foreground">
-      <section className="mx-auto flex min-h-screen max-w-6xl flex-col items-center justify-center px-6 text-center">
-        <h1 className="text-6xl font-bold tracking-tight">
-          IOTA
-        </h1>
+    <main className="flex min-h-screen flex-col bg-background text-foreground">
+      <TopBar />
+
+      <section className="flex flex-col items-center justify-center px-6 text-center" style={{ minHeight: "calc(100vh - 120px)" }}>
+        <HeroLogo />
 
         <p className="mt-4 max-w-2xl text-muted-foreground">
           AI-Powered Technical Interview Platform with collaborative coding,

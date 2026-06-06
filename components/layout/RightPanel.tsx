@@ -1,27 +1,49 @@
+import {
+  Accordion,
+  AccordionContent,
+  AccordionItem,
+  AccordionTrigger,
+} from "@/components/ui/accordion";
+
 export function RightPanel() {
   return (
     <aside className="border-l border-border bg-card p-4">
-      <div className="space-y-4">
-        <div className="rounded-lg border border-border p-3">
-          AI Questions
-        </div>
+      <Accordion type="multiple" className="w-full">
+        <AccordionItem value="ai">
+          <AccordionTrigger>AI Questions</AccordionTrigger>
+          <AccordionContent>
+            No questions generated yet.
+          </AccordionContent>
+        </AccordionItem>
 
-        <div className="rounded-lg border border-border p-3">
-          Chat
-        </div>
+        <AccordionItem value="chat">
+          <AccordionTrigger>Chat</AccordionTrigger>
+          <AccordionContent>
+            No messages yet.
+          </AccordionContent>
+        </AccordionItem>
 
-        <div className="rounded-lg border border-border p-3">
-          Proctoring
-        </div>
+        <AccordionItem value="proctoring">
+          <AccordionTrigger>Proctoring</AccordionTrigger>
+          <AccordionContent>
+            Waiting for interview.
+          </AccordionContent>
+        </AccordionItem>
 
-        <div className="rounded-lg border border-border p-3">
-          Notes
-        </div>
+        <AccordionItem value="notes">
+          <AccordionTrigger>Notes</AccordionTrigger>
+          <AccordionContent>
+            No notes yet.
+          </AccordionContent>
+        </AccordionItem>
 
-        <div className="rounded-lg border border-border p-3">
-          Details
-        </div>
-      </div>
+        <AccordionItem value="details">
+          <AccordionTrigger>Interview Details</AccordionTrigger>
+          <AccordionContent>
+            Interview not started.
+          </AccordionContent>
+        </AccordionItem>
+      </Accordion>
     </aside>
   );
 }

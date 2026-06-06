@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="24" height="24" role="img">
+  <title>IOTA</title>
+  <rect x="2" y="3" width="5" height="2" rx="0.5" fill="#0F1117"/>
+  <rect x="2" y="3" width="2" height="18" rx="0.5" fill="#0F1117"/>
+  <rect x="2" y="19" width="5" height="2" rx="0.5" fill="#0F1117"/>
+  <rect x="17" y="3" width="5" height="2" rx="0.5" fill="#0F1117"/>
+  <rect x="20" y="3" width="2" height="18" rx="0.5" fill="#0F1117"/>
+  <rect x="17" y="19" width="5" height="2" rx="0.5" fill="#0F1117"/>
+  <circle cx="12" cy="12" r="2" fill="#E8A020"/>
+</svg>

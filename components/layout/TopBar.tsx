@@ -1,16 +1,20 @@
 import { Clock3 } from "lucide-react";
+import { ThemeToggle } from "./ThemeToggle";
+import { Logo } from "@/components/common/Logo";
 
 export function TopBar() {
   return (
-    <header className="flex items-center justify-between border-b border-border px-6">
-      <div>
-        <h1 className="font-semibold">IOTA</h1>
-      </div>
+    <header className="flex h-16 items-center justify-between border-b border-border px-6">
+  <Logo />
 
-      <div className="flex items-center gap-4">
-        <Clock3 className="size-4" />
-        <span>00:00</span>
-      </div>
-    </header>
+  <div className="flex items-center gap-4">
+    <div className="flex items-center gap-2 text-sm text-muted-foreground">
+  <div className="size-2 rounded-full bg-green-500" />
+  <span>Ready</span>
+</div>
+
+    <ThemeToggle />
+  </div>
+</header>
   );
 }

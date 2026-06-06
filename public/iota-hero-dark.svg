@@ -1,0 +1,35 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 630" width="1200" height="630" role="img">
+  <title>IOTA — hero dark</title>
+
+  <rect width="1200" height="630" fill="#0F1117"/>
+
+  <!-- Subtle grid pattern -->
+  <defs>
+    <pattern id="grid" width="60" height="60" patternUnits="userSpaceOnUse">
+      <path d="M 60 0 L 0 0 0 60" fill="none" stroke="#1A1E2A" stroke-width="0.5"/>
+    </pattern>
+  </defs>
+  <rect width="1200" height="630" fill="url(#grid)"/>
+
+  <!-- Left bracket -->
+  <rect x="394" y="195" width="52" height="18" rx="4" fill="#E6EDF3"/>
+  <rect x="394" y="195" width="18" height="240" rx="4" fill="#E6EDF3"/>
+  <rect x="394" y="417" width="52" height="18" rx="4" fill="#E6EDF3"/>
+
+  <!-- Right bracket -->
+  <rect x="754" y="195" width="52" height="18" rx="4" fill="#E6EDF3"/>
+  <rect x="788" y="195" width="18" height="240" rx="4" fill="#E6EDF3"/>
+  <rect x="754" y="417" width="52" height="18" rx="4" fill="#E6EDF3"/>
+
+  <!-- Amber dot -->
+  <circle cx="600" cy="315" r="20" fill="#E8A020"/>
+
+  <!-- IOTA wordmark below -->
+  <text x="600" y="530"
+        font-family="-apple-system,BlinkMacSystemFont,'SF Pro Display','Helvetica Neue',sans-serif"
+        font-size="72"
+        font-weight="600"
+        fill="#E6EDF3"
+        letter-spacing="-2"
+        text-anchor="middle">IOTA</text>
+</svg>

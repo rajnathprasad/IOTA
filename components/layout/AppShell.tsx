@@ -9,7 +9,7 @@ interface AppShellProps {
 
 export function AppShell({ children }: AppShellProps) {
   return (
-    <div className="grid min-h-screen grid-rows-[56px_1fr_64px] bg-background text-foreground">
+    <div className="grid min-h-screen grid-rows-[4rem_1fr_4rem] bg-background text-foreground">
       <TopBar />
       <main className="grid grid-cols-[1fr_320px] overflow-hidden">
         <section className="overflow-auto p-6">

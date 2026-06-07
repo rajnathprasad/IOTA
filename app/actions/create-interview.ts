@@ -1,9 +1,7 @@
 "use server";
 
-import { auth } from "@/auth";
 import { prisma } from "@/lib/prisma";
-import { generateRoomCode } from "@/lib/generate-room-code";
-import { redirect } from "next/navigation";
+import { auth } from "@/auth";
 
 export async function createInterview() {
   const session = await auth();
@@ -22,14 +20,17 @@ export async function createInterview() {
     throw new Error("User not found");
   }
 
-  const roomCode = generateRoomCode();
+  const roomCode = Math.random()
+    .toString(36)
+    .substring(2, 8)
+    .toUpperCase();
 
-  await prisma.interview.create({
+  const interview = await prisma.interview.create({
     data: {
       roomCode,
       interviewerId: user.id,
     },
   });
 
-  redirect(`/interview/${roomCode}`);
+  return interview;
 }

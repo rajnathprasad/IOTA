@@ -1,3 +1,18 @@
-export default function Interview(){
-    return <h1>Interview page</h1>
+type Props = {
+  params: Promise<{
+    roomCode: string;
+  }>;
+};
+
+export default async function InterviewPage({
+  params,
+}: Props) {
+  const { roomCode } = await params;
+
+  return (
+    <div className="p-10">
+      Interview Room:
+      {roomCode}
+    </div>
+  );
 }

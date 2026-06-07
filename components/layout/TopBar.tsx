@@ -11,12 +11,26 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+type TopBarProps = {
+  roomCode?: string;
+};
 
-export async function TopBar() {
+
+export async function TopBar({
+  roomCode,
+}: TopBarProps) {
   const session = await auth();
   return (
     <header className="flex h-16 items-center justify-between border-b border-border px-6">
-      <Logo />
+      <div className="flex items-center gap-4">
+  <Logo />
+
+  {roomCode && (
+    <div className="rounded-md border px-3 py-1 text-sm text-muted-foreground">
+      Room: {roomCode}
+    </div>
+  )}
+</div>
 
       <div className="flex items-center gap-4">
         <div className="flex items-center gap-2 text-sm text-muted-foreground">

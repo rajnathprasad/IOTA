@@ -8,12 +8,14 @@ interface AppShellProps {
   children: ReactNode;
   role: "INTERVIEWER" | "CANDIDATE";
   roomCode?: string;
+  inInterviewRoom?: boolean;
 }
 
 export function AppShell({
   children,
   role,
   roomCode,
+  inInterviewRoom = false,
 }: AppShellProps) {
   return (
     <div className="h-screen overflow-hidden grid grid-rows-[4rem_1fr_4rem] bg-background text-foreground">
@@ -24,7 +26,10 @@ export function AppShell({
         {role === "INTERVIEWER" ? <RightPanel /> : <CandidateRightPanel />}
       </main>
 
-      <BottomBar role={role} />
+      <BottomBar
+  role={role}
+  inInterviewRoom={inInterviewRoom}
+/>
     </div>
   );
 }

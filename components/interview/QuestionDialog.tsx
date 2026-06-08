@@ -13,6 +13,9 @@ import type { InterviewQuestion } from "./types";
 
 import { useInterviewStore } from "@/store/interview-store";
 
+import { socket }
+  from "@/lib/socket";
+
 type QuestionDialogProps = {
   open: boolean;
   onOpenChange: (open: boolean) => void;
@@ -33,10 +36,23 @@ export function QuestionDialog({
   if (!question) return null;
 
   const handleShare = () => {
-    setSharedQuestion(question);
+  setSharedQuestion(question);
 
-    onOpenChange(false);
-  };
+  const roomCode =
+    window.location.pathname
+      .split("/")
+      .pop();
+
+  socket.emit(
+    "question-share",
+    {
+      roomCode,
+      question,
+    }
+  );
+
+  onOpenChange(false);
+};
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>

@@ -1,5 +1,9 @@
+import { auth } from "@/auth";
+import { prisma } from "@/lib/prisma";
+
 import { AppShell } from "@/components/layout/AppShell";
 import { MainContent } from "@/components/dashboard/MainContent";
+import { SocketProvider } from "@/components/socket/SocketProvider";
 
 type Props = {
   params: Promise<{
@@ -12,11 +16,30 @@ export default async function InterviewPage({
 }: Props) {
   const { roomCode } = await params;
 
+  const session = await auth();
+
+  const user = await prisma.user.findUnique({
+    where: {
+      email: session?.user?.email ?? "",
+    },
+  });
+
+  if (!user) {
+    throw new Error("User not found");
+  }
+
   return (
     <AppShell
-      role="CANDIDATE"
-      roomCode={roomCode}
-    >
+  role={
+    user.role === "INTERVIEWER"
+      ? "INTERVIEWER"
+      : "CANDIDATE"
+  }
+  roomCode={roomCode}
+  inInterviewRoom={true}
+>
+      <SocketProvider roomCode={roomCode} />
+
       <MainContent />
     </AppShell>
   );

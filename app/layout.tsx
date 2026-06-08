@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Plus_Jakarta_Sans, JetBrains_Mono } from "next/font/google";
 import "./globals.css";
 import { ThemeProvider } from "@/components/providers/ThemeProvider";
+import { SocketProvider } from "@/components/socket/SocketProvider";
 
 const jakarta = Plus_Jakarta_Sans({
   variable: "--font-sans",
@@ -17,8 +18,6 @@ export const metadata: Metadata = {
   title: "IOTA",
   description: "AI-Powered Technical Interview Platform",
 };
-
-
 
 export default function RootLayout({
   children,

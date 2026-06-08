@@ -6,9 +6,13 @@ import { useRouter } from "next/navigation";
 
 type BottomBarProps = {
   role: "INTERVIEWER" | "CANDIDATE";
+  inInterviewRoom: boolean;
 };
 
-export function BottomBar({ role }: BottomBarProps) {
+export function BottomBar({
+  role,
+  inInterviewRoom,
+}: BottomBarProps){
   const router = useRouter();
 
   async function handleCreateInterview() {
@@ -23,11 +27,12 @@ export function BottomBar({ role }: BottomBarProps) {
 
   return (
     <footer className="flex h-16 items-center justify-center border-t">
-      {role === "INTERVIEWER" && (
-        <Button onClick={handleCreateInterview}>
-          Create Interview
-        </Button>
-      )}
+      {role === "INTERVIEWER" &&
+  !inInterviewRoom && (
+    <Button onClick={handleCreateInterview}>
+      Create Interview
+    </Button>
+)}
     </footer>
   );
 }

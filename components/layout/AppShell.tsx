@@ -26,26 +26,40 @@ export function AppShell({
 }: AppShellProps) {
   return (
     <div className="h-screen overflow-hidden grid grid-rows-[4rem_1fr_4rem] bg-background text-foreground">
-      <TopBar roomCode={roomCode} />
-      <main className="grid grid-cols-[1fr_320px] overflow-hidden">
-        <section className="overflow-hidden p-6">{children}</section>
+      <TopBar
+        roomCode={roomCode}
+        role={role}
+      />
 
-        {
-  role === "INTERVIEWER" ? (
-    <RightPanel currentUserName={currentUserName} />
-  ) : (
-    <CandidateRightPanel
-      currentUserName={currentUserName}
-    />
-  )
-}
+      <main className="grid grid-cols-[1fr_320px] overflow-hidden">
+        <section className="overflow-hidden p-6">
+          {children}
+        </section>
+
+        {role === "INTERVIEWER" ? (
+          <RightPanel
+            currentUserName={
+              currentUserName
+            }
+          />
+        ) : (
+          <CandidateRightPanel
+            currentUserName={
+              currentUserName
+            }
+          />
+        )}
       </main>
 
       <BottomBar
-  role={role}
-  inInterviewRoom={inInterviewRoom}
-  interviewStatus={interviewStatus}
-/>
+        role={role}
+        inInterviewRoom={
+          inInterviewRoom
+        }
+        interviewStatus={
+          interviewStatus
+        }
+      />
     </div>
   );
 }

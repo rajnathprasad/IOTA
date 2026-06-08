@@ -1,5 +1,6 @@
 import { create } from "zustand";
 import type { InterviewQuestion } from "@/components/interview/types";
+import type { ChatMessage } from "@/components/chat/types";
 
 type InterviewStore = {
   sharedQuestion: InterviewQuestion | null;
@@ -7,6 +8,8 @@ type InterviewStore = {
   language: string;
   code: string;
   output: string;
+
+  messages: ChatMessage[];
 
   setSharedQuestion: (
     question: InterviewQuestion
@@ -23,6 +26,14 @@ type InterviewStore = {
   setOutput: (
     output: string
   ) => void;
+
+  setMessages: (
+    messages: ChatMessage[]
+  ) => void;
+
+  addMessage: (
+    message: ChatMessage
+  ) => void;
 };
 
 export const useInterviewStore =
@@ -36,6 +47,8 @@ export const useInterviewStore =
 }`,
 
     output: "",
+
+    messages: [],
 
     setSharedQuestion: (question) =>
       set({
@@ -56,4 +69,17 @@ export const useInterviewStore =
       set({
         output,
       }),
+
+    setMessages: (messages) =>
+      set({
+        messages,
+      }),
+
+    addMessage: (message) =>
+      set((state) => ({
+        messages: [
+          ...state.messages,
+          message,
+        ],
+      })),
   }));

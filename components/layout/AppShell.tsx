@@ -9,6 +9,7 @@ interface AppShellProps {
   role: "INTERVIEWER" | "CANDIDATE";
   roomCode?: string;
   inInterviewRoom?: boolean;
+  currentUserName: string;
 }
 
 export function AppShell({
@@ -16,6 +17,7 @@ export function AppShell({
   role,
   roomCode,
   inInterviewRoom = false,
+  currentUserName,
 }: AppShellProps) {
   return (
     <div className="h-screen overflow-hidden grid grid-rows-[4rem_1fr_4rem] bg-background text-foreground">
@@ -23,7 +25,15 @@ export function AppShell({
       <main className="grid grid-cols-[1fr_320px] overflow-hidden">
         <section className="overflow-hidden p-6">{children}</section>
 
-        {role === "INTERVIEWER" ? <RightPanel /> : <CandidateRightPanel />}
+        {
+  role === "INTERVIEWER" ? (
+    <RightPanel currentUserName={currentUserName} />
+  ) : (
+    <CandidateRightPanel
+      currentUserName={currentUserName}
+    />
+  )
+}
       </main>
 
       <BottomBar

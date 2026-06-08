@@ -9,7 +9,9 @@ type SocketProviderProps = {
 };
 
 export function SocketProvider({ roomCode }: SocketProviderProps) {
-  console.log("SOCKET PROVIDER MOUNTED", roomCode);
+
+
+  const addMessage = useInterviewStore((state) => state.addMessage);
 
   const setCode = useInterviewStore((state) => state.setCode);
 
@@ -20,16 +22,16 @@ export function SocketProvider({ roomCode }: SocketProviderProps) {
   );
 
   useEffect(() => {
-    console.log("CONNECTING SOCKET");
+
 
     socket.connect();
 
-    console.log("JOINING ROOM", roomCode);
+
 
     socket.emit("join-room", roomCode);
 
     socket.on("question-shared", (question) => {
-      console.log("RECEIVED QUESTION", question.title);
+
 
       setSharedQuestion(question);
     });
@@ -41,17 +43,23 @@ export function SocketProvider({ roomCode }: SocketProviderProps) {
     socket.on("language-updated", (language) => {
       setLanguage(language);
     });
+    socket.on("chat-message-received", (message) => {
+      addMessage(message);
+    });
 
     return () => {
-      console.log("DISCONNECTING SOCKET");
 
       socket.off("question-shared");
       socket.off("code-updated");
       socket.off("language-updated");
-
+      socket.off("chat-message-received");
       socket.disconnect();
     };
-  }, [roomCode, setSharedQuestion]);
+  }, [roomCode,
+  setSharedQuestion,
+  setCode,
+  setLanguage,
+  addMessage,]);
 
   return null;
 }

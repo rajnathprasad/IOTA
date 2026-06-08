@@ -37,6 +37,9 @@ export default async function InterviewPage({
   }
   roomCode={roomCode}
   inInterviewRoom={true}
+  currentUserName={
+    user.name ?? "User"
+  }
 >
       <SocketProvider roomCode={roomCode} />
 

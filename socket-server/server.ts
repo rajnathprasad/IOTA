@@ -58,4 +58,22 @@ socket.on(
   socket.on("disconnect", () => {
     console.log("Disconnected:", socket.id);
   });
+
+  socket.on(
+  "chat-message",
+  ({ roomCode, message }) => {
+    console.log(
+      "CHAT:",
+      roomCode,
+      message.message
+    );
+
+    socket
+      .to(roomCode)
+      .emit(
+        "chat-message-received",
+        message
+      );
+  }
+);
 });

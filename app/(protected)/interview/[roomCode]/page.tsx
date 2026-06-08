@@ -18,30 +18,55 @@ export default async function InterviewPage({
 
   const session = await auth();
 
-  const user = await prisma.user.findUnique({
-    where: {
-      email: session?.user?.email ?? "",
-    },
-  });
+  const interview =
+    await prisma.interview.findUnique({
+      where: {
+        roomCode,
+      },
+    });
+
+  if (!interview) {
+    throw new Error(
+      "Interview not found"
+    );
+  }
+
+  const user =
+    await prisma.user.findUnique({
+      where: {
+        email:
+          session?.user?.email ?? "",
+      },
+    });
 
   if (!user) {
-    throw new Error("User not found");
+    throw new Error(
+      "User not found"
+    );
   }
+
+  const role =
+    user.role ===
+    "INTERVIEWER"
+      ? "INTERVIEWER"
+      : "CANDIDATE";
 
   return (
     <AppShell
-  role={
-    user.role === "INTERVIEWER"
-      ? "INTERVIEWER"
-      : "CANDIDATE"
-  }
-  roomCode={roomCode}
-  inInterviewRoom={true}
-  currentUserName={
-    user.name ?? "User"
-  }
->
-      <SocketProvider roomCode={roomCode} />
+      role={role}
+      roomCode={roomCode}
+      inInterviewRoom={true}
+      currentUserName={
+        user.name ?? "User"
+      }
+      interviewStatus={
+        interview.status
+      }
+    >
+      <SocketProvider
+        roomCode={roomCode}
+        role={role}
+      />
 
       <MainContent />
     </AppShell>

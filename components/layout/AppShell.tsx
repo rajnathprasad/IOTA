@@ -10,6 +10,10 @@ interface AppShellProps {
   roomCode?: string;
   inInterviewRoom?: boolean;
   currentUserName: string;
+  interviewStatus:
+    | "WAITING"
+    | "ACTIVE"
+    | "ENDED";
 }
 
 export function AppShell({
@@ -18,6 +22,7 @@ export function AppShell({
   roomCode,
   inInterviewRoom = false,
   currentUserName,
+  interviewStatus,
 }: AppShellProps) {
   return (
     <div className="h-screen overflow-hidden grid grid-rows-[4rem_1fr_4rem] bg-background text-foreground">
@@ -39,6 +44,7 @@ export function AppShell({
       <BottomBar
   role={role}
   inInterviewRoom={inInterviewRoom}
+  interviewStatus={interviewStatus}
 />
     </div>
   );

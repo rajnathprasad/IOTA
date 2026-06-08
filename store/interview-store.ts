@@ -1,13 +1,26 @@
 import { create } from "zustand";
-import type { InterviewQuestion } from "@/components/interview/types";
-import type { ChatMessage } from "@/components/chat/types";
+
+import type { InterviewQuestion }
+  from "@/components/interview/types";
+
+import type { ChatMessage }
+  from "@/components/chat/types";
 
 type InterviewStore = {
-  sharedQuestion: InterviewQuestion | null;
+  sharedQuestion:
+    InterviewQuestion | null;
 
   language: string;
   code: string;
   output: string;
+
+  candidateConnected: boolean;
+  interviewerConnected: boolean;
+
+  interviewStatus:
+    | "WAITING"
+    | "ACTIVE"
+    | "ENDED";
 
   messages: ChatMessage[];
 
@@ -34,6 +47,21 @@ type InterviewStore = {
   addMessage: (
     message: ChatMessage
   ) => void;
+
+  setCandidateConnected: (
+    connected: boolean
+  ) => void;
+
+  setInterviewerConnected: (
+    connected: boolean
+  ) => void;
+
+  setInterviewStatus: (
+    status:
+      | "WAITING"
+      | "ACTIVE"
+      | "ENDED"
+  ) => void;
 };
 
 export const useInterviewStore =
@@ -47,6 +75,11 @@ export const useInterviewStore =
 }`,
 
     output: "",
+
+    candidateConnected: false,
+    interviewerConnected: false,
+
+    interviewStatus: "WAITING",
 
     messages: [],
 
@@ -82,4 +115,27 @@ export const useInterviewStore =
           message,
         ],
       })),
+
+    setCandidateConnected: (
+      connected
+    ) =>
+      set({
+        candidateConnected:
+          connected,
+      }),
+
+    setInterviewerConnected: (
+      connected
+    ) =>
+      set({
+        interviewerConnected:
+          connected,
+      }),
+
+    setInterviewStatus: (
+      status
+    ) =>
+      set({
+        interviewStatus: status,
+      }),
   }));

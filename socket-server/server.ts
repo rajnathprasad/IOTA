@@ -6,6 +6,10 @@ const io = new Server(3001, {
   },
 });
 
+console.log(
+  "Socket Server Running on Port 3001"
+);
+
 const roomUsers = new Map<
   string,
   {
@@ -14,10 +18,21 @@ const roomUsers = new Map<
   }
 >();
 
-
-
 io.on("connection", (socket) => {
 
+  console.log(
+    "Connected:",
+    socket.id
+  );
+
+  socket.onAny(
+    (event, ...args) => {
+      console.log(
+        "EVENT:",
+        event
+      );
+    }
+  );
 
   let currentRoom = "";
   let currentRole = "";
@@ -60,8 +75,6 @@ io.on("connection", (socket) => {
         "presence-updated",
         room
       );
-
-
     }
   );
 
@@ -151,35 +164,98 @@ io.on("connection", (socket) => {
           room
         );
       }
-
-
     }
   );
 
   socket.on(
-  "interview-started",
-  (roomCode) => {
-    
+    "interview-started",
+    (roomCode) => {
+      socket
+        .to(roomCode)
+        .emit(
+          "interview-started"
+        );
+    }
+  );
 
-    socket
-      .to(roomCode)
-      .emit(
-        "interview-started"
+  socket.on(
+    "interview-ended",
+    (roomCode) => {
+      socket
+        .to(roomCode)
+        .emit(
+          "interview-ended"
+        );
+    }
+  );
+
+  socket.on(
+    "active-view-change",
+    ({ roomCode, view }) => {
+      socket
+        .to(roomCode)
+        .emit(
+          "remote-active-view",
+          view
+        );
+    }
+  );
+
+  socket.on(
+    "screen-share-state",
+    ({
+      roomCode,
+      role,
+      sharing,
+    }) => {
+      socket.to(roomCode).emit(
+        "screen-share-state-updated",
+        {
+          role,
+          sharing,
+        }
       );
-  }
-);
+    }
+  );
 
-socket.on(
-  "interview-ended",
-  (roomCode) => {
-    
-
-    socket
-      .to(roomCode)
-      .emit(
-        "interview-ended"
+  socket.on(
+    "webrtc-offer",
+    ({ roomCode, offer }) => {
+      console.log(
+        "Offer received by server"
       );
-  }
-);
 
+      socket.to(roomCode).emit(
+        "webrtc-offer",
+        offer
+      );
+    }
+  );
+
+  socket.on(
+    "webrtc-answer",
+    ({ roomCode, answer }) => {
+      console.log(
+        "Answer received by server"
+      );
+
+      socket.to(roomCode).emit(
+        "webrtc-answer",
+        answer
+      );
+    }
+  );
+
+  socket.on(
+    "webrtc-ice-candidate",
+    ({
+      roomCode,
+      candidate,
+    }) => {
+      socket.to(roomCode).emit(
+        "webrtc-ice-candidate",
+        candidate
+      );
+    }
+  );
 });

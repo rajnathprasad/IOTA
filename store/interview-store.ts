@@ -17,12 +17,46 @@ type InterviewStore = {
   candidateConnected: boolean;
   interviewerConnected: boolean;
 
+  candidateSharing: boolean;
+  interviewerSharing: boolean;
+
   interviewStatus:
     | "WAITING"
     | "ACTIVE"
     | "ENDED";
 
+  activeView:
+    | "CODE"
+    | "INTERVIEWER_SCREEN"
+    | "CANDIDATE_SCREEN";
+
+  remoteActiveView:
+    | "CODE"
+    | "INTERVIEWER_SCREEN"
+    | "CANDIDATE_SCREEN";
+
   messages: ChatMessage[];
+
+  interviewStartedAt:
+    number | null;
+
+  localStream:
+    MediaStream | null;
+
+  remoteStream:
+    MediaStream | null;
+
+  setInterviewStartedAt: (
+    timestamp: number
+  ) => void;
+
+  setLocalStream: (
+    stream: MediaStream | null
+  ) => void;
+
+  setRemoteStream: (
+    stream: MediaStream | null
+  ) => void;
 
   setSharedQuestion: (
     question: InterviewQuestion
@@ -56,86 +90,184 @@ type InterviewStore = {
     connected: boolean
   ) => void;
 
+  setCandidateSharing: (
+    sharing: boolean
+  ) => void;
+
+  setInterviewerSharing: (
+    sharing: boolean
+  ) => void;
+
   setInterviewStatus: (
     status:
       | "WAITING"
       | "ACTIVE"
       | "ENDED"
   ) => void;
+
+  setActiveView: (
+    view:
+      | "CODE"
+      | "INTERVIEWER_SCREEN"
+      | "CANDIDATE_SCREEN"
+  ) => void;
+
+  setRemoteActiveView: (
+    view:
+      | "CODE"
+      | "INTERVIEWER_SCREEN"
+      | "CANDIDATE_SCREEN"
+  ) => void;
 };
 
 export const useInterviewStore =
-  create<InterviewStore>((set) => ({
-    sharedQuestion: null,
+  create<InterviewStore>(
+    (set) => ({
+      sharedQuestion: null,
 
-    language: "javascript",
+      language: "javascript",
 
-    code: `function solve() {
+      code: `function solve() {
 
 }`,
 
-    output: "",
+      output: "",
 
-    candidateConnected: false,
-    interviewerConnected: false,
+      candidateConnected: false,
+      interviewerConnected: false,
 
-    interviewStatus: "WAITING",
+      candidateSharing: false,
+      interviewerSharing: false,
 
-    messages: [],
+      interviewStatus:
+        "WAITING",
 
-    setSharedQuestion: (question) =>
-      set({
-        sharedQuestion: question,
-      }),
+      activeView: "CODE",
 
-    setLanguage: (language) =>
-      set({
-        language,
-      }),
+      remoteActiveView:
+        "CODE",
 
-    setCode: (code) =>
-      set({
-        code,
-      }),
+      messages: [],
 
-    setOutput: (output) =>
-      set({
-        output,
-      }),
+      interviewStartedAt:
+        null,
 
-    setMessages: (messages) =>
-      set({
-        messages,
-      }),
+      localStream: null,
 
-    addMessage: (message) =>
-      set((state) => ({
-        messages: [
-          ...state.messages,
-          message,
-        ],
-      })),
+      remoteStream: null,
 
-    setCandidateConnected: (
-      connected
-    ) =>
-      set({
-        candidateConnected:
-          connected,
-      }),
+      setSharedQuestion: (
+        question
+      ) =>
+        set({
+          sharedQuestion:
+            question,
+        }),
 
-    setInterviewerConnected: (
-      connected
-    ) =>
-      set({
-        interviewerConnected:
-          connected,
-      }),
+      setLanguage: (
+        language
+      ) =>
+        set({
+          language,
+        }),
 
-    setInterviewStatus: (
-      status
-    ) =>
-      set({
-        interviewStatus: status,
-      }),
-  }));
+      setCode: (code) =>
+        set({
+          code,
+        }),
+
+      setOutput: (
+        output
+      ) =>
+        set({
+          output,
+        }),
+
+      setMessages: (
+        messages
+      ) =>
+        set({
+          messages,
+        }),
+
+      addMessage: (
+        message
+      ) =>
+        set((state) => ({
+          messages: [
+            ...state.messages,
+            message,
+          ],
+        })),
+
+      setCandidateConnected:
+        (connected) =>
+          set({
+            candidateConnected:
+              connected,
+          }),
+
+      setInterviewerConnected:
+        (connected) =>
+          set({
+            interviewerConnected:
+              connected,
+          }),
+
+      setCandidateSharing:
+        (sharing) =>
+          set({
+            candidateSharing:
+              sharing,
+          }),
+
+      setInterviewerSharing:
+        (sharing) =>
+          set({
+            interviewerSharing:
+              sharing,
+          }),
+
+      setInterviewStatus:
+        (status) =>
+          set({
+            interviewStatus:
+              status,
+          }),
+
+      setActiveView:
+        (view) =>
+          set({
+            activeView:
+              view,
+          }),
+
+      setRemoteActiveView:
+        (view) =>
+          set({
+            remoteActiveView:
+              view,
+          }),
+
+      setInterviewStartedAt:
+        (timestamp) =>
+          set({
+            interviewStartedAt:
+              timestamp,
+          }),
+
+      setLocalStream:
+        (stream) =>
+          set({
+            localStream:
+              stream,
+          }),
+
+      setRemoteStream:
+        (stream) =>
+          set({
+            remoteStream:
+              stream,
+          }),
+    })
+  );

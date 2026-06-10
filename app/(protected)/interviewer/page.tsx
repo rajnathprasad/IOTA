@@ -3,7 +3,11 @@ import { MainContent } from "@/components/dashboard/MainContent";
 
 export default function InterviewerPage() {
   return (
-    <AppShell role="INTERVIEWER">
+    <AppShell
+      role="INTERVIEWER"
+      currentUserName="Interviewer"
+      interviewStatus="WAITING"
+    >
       <MainContent />
     </AppShell>
   );

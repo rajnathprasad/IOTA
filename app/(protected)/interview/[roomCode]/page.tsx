@@ -5,6 +5,9 @@ import { AppShell } from "@/components/layout/AppShell";
 import { MainContent } from "@/components/dashboard/MainContent";
 import { SocketProvider } from "@/components/socket/SocketProvider";
 
+import { WebRTCProvider }
+  from "@/components/webrtc/WebRTCProvider";
+
 type Props = {
   params: Promise<{
     roomCode: string;
@@ -68,7 +71,12 @@ export default async function InterviewPage({
         role={role}
       />
 
-      <MainContent />
+      <WebRTCProvider
+  roomCode={roomCode}
+  role={role}
+>
+  <MainContent />
+</WebRTCProvider>
     </AppShell>
   );
 }

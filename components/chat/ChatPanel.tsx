@@ -37,7 +37,11 @@ export function ChatPanel({
     if (!text.trim()) return;
 
     const message = {
-  id: crypto.randomUUID(),
+  id:
+  Date.now().toString() +
+  Math.random()
+    .toString(36)
+    .slice(2),
   sender: currentUserName,
   message: text,
   timestamp: Date.now(),

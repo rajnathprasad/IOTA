@@ -2,6 +2,12 @@
 
 import { useEffect, useRef } from "react";
 import { useInterviewStore } from "@/store/interview-store";
+import {
+  Mic,
+  MicOff,
+  Video,
+  VideoOff,
+} from "lucide-react";
 
 type VideoFeedProps = {
   label: string;
@@ -13,6 +19,17 @@ export function VideoFeed({ label, streamType }: VideoFeedProps) {
 
   const localStream = useInterviewStore((s) => s.localStream);
   const remoteStream = useInterviewStore((s) => s.remoteStream);
+  const remoteMicEnabled =
+  useInterviewStore(
+    (s) =>
+      s.remoteMicEnabled
+  );
+
+const remoteCameraEnabled =
+  useInterviewStore(
+    (s) =>
+      s.remoteCameraEnabled
+  );
 
   useEffect(() => {
     const video = videoRef.current;
@@ -57,9 +74,41 @@ export function VideoFeed({ label, streamType }: VideoFeedProps) {
         onPlay={() => console.log(`${label} play event`)}
         className="h-full w-full object-cover"
       />
-      <div className="absolute left-3 top-3 rounded-md bg-black/60 px-2 py-1 text-xs text-white">
-        {label}
-      </div>
+      <div
+  className="
+    absolute
+    left-3
+    top-3
+
+    rounded-md
+    bg-black/60
+
+    px-2
+    py-1
+
+    text-xs
+    text-white
+  "
+>
+  <div>{label}</div>
+
+  {streamType ===
+    "REMOTE" && (
+    <div className="mt-1 flex gap-2">
+      {remoteMicEnabled ? (
+        <Mic className="h-3 w-3" />
+      ) : (
+        <MicOff className="h-3 w-3 text-red-400" />
+      )}
+
+      {remoteCameraEnabled ? (
+        <Video className="h-3 w-3" />
+      ) : (
+        <VideoOff className="h-3 w-3 text-red-400" />
+      )}
+    </div>
+  )}
+</div>
     </div>
   );
 }

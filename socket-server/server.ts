@@ -203,16 +203,13 @@ io.on("connection", (socket) => {
 
   socket.on(
     "screen-share-state",
-    ({
-      roomCode,
-      role,
-      sharing,
-    }) => {
+    ({ roomCode, role, sharing, streamId }) => {
       socket.to(roomCode).emit(
         "screen-share-state-updated",
         {
           role,
           sharing,
+          streamId,
         }
       );
     }
@@ -258,4 +255,72 @@ io.on("connection", (socket) => {
       );
     }
   );
+
+  socket.on(
+  "mic-state-change",
+  ({
+    roomCode,
+    enabled,
+  }) => {
+    console.log(
+      "Broadcast mic:",
+      roomCode,
+      enabled
+    );
+
+    socket
+      .to(roomCode)
+      .emit(
+        "mic-state-updated",
+        enabled
+      );
+  }
+);
+socket.on(
+  "camera-state-change",
+  ({
+    roomCode,
+    enabled,
+  }) => {
+    console.log(
+      "Broadcast camera:",
+      roomCode,
+      enabled
+    );
+
+    socket
+      .to(roomCode)
+      .emit(
+        "camera-state-updated",
+        enabled
+      );
+  }
+);
+
+socket.on(
+  "webrtc-renegotiate-offer",
+  ({
+    roomCode,
+    offer,
+  }) => {
+    socket.to(roomCode).emit(
+      "webrtc-renegotiate-offer",
+      offer
+    );
+  }
+);
+
+socket.on(
+  "webrtc-renegotiate-answer",
+  ({
+    roomCode,
+    answer,
+  }) => {
+    socket.to(roomCode).emit(
+      "webrtc-renegotiate-answer",
+      answer
+    );
+  }
+);
 });
+

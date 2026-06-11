@@ -35,6 +35,22 @@ export function WorkspaceTabs() {
         state.interviewerSharing
     );
 
+  const candidateConnected =
+    useInterviewStore(
+      (state) =>
+        state.candidateConnected
+    );
+
+  const interviewerConnected =
+    useInterviewStore(
+      (state) =>
+        state.interviewerConnected
+    );
+
+  const remoteConnected =
+    candidateConnected &&
+    interviewerConnected;
+
   const tabs = [
     {
       value: "CODE",
@@ -116,9 +132,10 @@ export function WorkspaceTabs() {
               {tab.label}
             </span>
 
-            {isRemoteActive && (
-              <div className="size-2 rounded-full bg-green-500" />
-            )}
+            {remoteConnected &&
+              isRemoteActive && (
+                <div className="size-2 rounded-full bg-green-500" />
+              )}
 
             {isSharing && (
               <span className="rounded-md bg-red-500/10 px-2 py-0.5 text-xs font-medium text-red-500">

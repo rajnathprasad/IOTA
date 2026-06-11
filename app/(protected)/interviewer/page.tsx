@@ -8,7 +8,9 @@ export default function InterviewerPage() {
       currentUserName="Interviewer"
       interviewStatus="WAITING"
     >
-      <MainContent />
+      <MainContent
+  currentUserRole="INTERVIEWER"
+/>
     </AppShell>
   );
 }

@@ -10,11 +10,23 @@ type WebRTCProviderProps = {
   role: "INTERVIEWER" | "CANDIDATE";
 };
 
-export function WebRTCProvider({ children, roomCode, role }: WebRTCProviderProps) {
+export function WebRTCProvider({
+  children,
+  roomCode,
+  role,
+}: WebRTCProviderProps) {
   const setLocalStream = useInterviewStore((s) => s.setLocalStream);
   const setRemoteStream = useInterviewStore((s) => s.setRemoteStream);
+  const setPeerConnection = useInterviewStore((s) => s.setPeerConnection);
   const candidateConnected = useInterviewStore((s) => s.candidateConnected);
   const interviewerConnected = useInterviewStore((s) => s.interviewerConnected);
+  const setRemoteInterviewerScreenStream = useInterviewStore(
+    (s) => s.setRemoteInterviewerScreenStream,
+  );
+
+  const setRemoteCandidateScreenStream = useInterviewStore(
+    (s) => s.setRemoteCandidateScreenStream,
+  );
 
   const peerConnectionRef = useRef<RTCPeerConnection | null>(null);
   const offerCreatedRef = useRef(false);
@@ -37,44 +49,83 @@ export function WebRTCProvider({ children, roomCode, role }: WebRTCProviderProps
 
   useEffect(() => {
     const peerConnection = new RTCPeerConnection({
-  iceServers: [
-    { urls: "stun:stun.relay.metered.ca:80" },
-    {
-      urls: "turn:global.relay.metered.ca:80",
-      username: process.env.NEXT_PUBLIC_TURN_USERNAME,
-      credential: process.env.NEXT_PUBLIC_TURN_CREDENTIAL,
-    },
-    {
-      urls: "turn:global.relay.metered.ca:80?transport=tcp",
-      username: process.env.NEXT_PUBLIC_TURN_USERNAME,
-      credential: process.env.NEXT_PUBLIC_TURN_CREDENTIAL,
-    },
-    {
-      urls: "turn:global.relay.metered.ca:443",
-      username: process.env.NEXT_PUBLIC_TURN_USERNAME,
-      credential: process.env.NEXT_PUBLIC_TURN_CREDENTIAL,
-    },
-    {
-      urls: "turns:global.relay.metered.ca:443?transport=tcp",
-      username: process.env.NEXT_PUBLIC_TURN_USERNAME,
-      credential: process.env.NEXT_PUBLIC_TURN_CREDENTIAL,
-    },
-  ],
-  iceCandidatePoolSize: 10,
-});
+      iceServers: [
+        { urls: "stun:stun.relay.metered.ca:80" },
+        {
+          urls: "turn:global.relay.metered.ca:80",
+          username: process.env.NEXT_PUBLIC_TURN_USERNAME,
+          credential: process.env.NEXT_PUBLIC_TURN_CREDENTIAL,
+        },
+        {
+          urls: "turn:global.relay.metered.ca:80?transport=tcp",
+          username: process.env.NEXT_PUBLIC_TURN_USERNAME,
+          credential: process.env.NEXT_PUBLIC_TURN_CREDENTIAL,
+        },
+        {
+          urls: "turn:global.relay.metered.ca:443",
+          username: process.env.NEXT_PUBLIC_TURN_USERNAME,
+          credential: process.env.NEXT_PUBLIC_TURN_CREDENTIAL,
+        },
+        {
+          urls: "turns:global.relay.metered.ca:443?transport=tcp",
+          username: process.env.NEXT_PUBLIC_TURN_USERNAME,
+          credential: process.env.NEXT_PUBLIC_TURN_CREDENTIAL,
+        },
+      ],
+      iceCandidatePoolSize: 10,
+    });
     peerConnectionRef.current = peerConnection;
 
-    peerConnection.ontrack = (event) => {
-      console.log("Remote Stream Received", event.streams[0]);
-      console.log("Video Tracks:", event.streams[0].getVideoTracks());
-      console.log("Audio Tracks:", event.streams[0].getAudioTracks());
+    setPeerConnection(peerConnection);
 
-      setRemoteStream(new MediaStream(event.streams[0].getTracks()));
-    };
+    peerConnection.ontrack = (event) => {
+  const stream = event.streams[0];
+
+  if (!stream) return;
+
+  const videoTracks = stream.getVideoTracks();
+  const audioTracks = stream.getAudioTracks();
+
+
+  if (audioTracks.length > 0 && videoTracks.length > 0) {
+    setRemoteStream(new MediaStream(stream.getTracks()));
+    return;
+  }
+
+  if (videoTracks.length > 0 && audioTracks.length === 0) {
+    const expectedStreamId = useInterviewStore.getState().remoteScreenStreamId;
+
+    if (stream.id === expectedStreamId) {
+
+      if (role === "INTERVIEWER") {
+        setRemoteCandidateScreenStream(new MediaStream(videoTracks));
+      } else {
+        setRemoteInterviewerScreenStream(new MediaStream(videoTracks));
+      }
+      return;
+    }
+
+    const capturedStream = stream;
+    const capturedTracks = videoTracks;
+    setTimeout(() => {
+      const retryId = useInterviewStore.getState().remoteScreenStreamId;
+      if (capturedStream.id === retryId) {
+        if (role === "INTERVIEWER") {
+          setRemoteCandidateScreenStream(new MediaStream(capturedTracks));
+        } else {
+          setRemoteInterviewerScreenStream(new MediaStream(capturedTracks));
+        }
+      }
+    }, 500);
+  }
+};
 
     peerConnection.onicecandidate = (event) => {
       if (event.candidate) {
-        socket.emit("webrtc-ice-candidate", { roomCode, candidate: event.candidate });
+        socket.emit("webrtc-ice-candidate", {
+          roomCode,
+          candidate: event.candidate,
+        });
       }
     };
 
@@ -86,6 +137,27 @@ export function WebRTCProvider({ children, roomCode, role }: WebRTCProviderProps
       console.log("Connection state:", peerConnection.connectionState);
     };
 
+    socket.on("webrtc-renegotiate-offer", async (offer) => {
+      await peerConnection.setRemoteDescription(
+        new RTCSessionDescription(offer),
+      );
+
+      const answer = await peerConnection.createAnswer();
+
+      await peerConnection.setLocalDescription(answer);
+
+      socket.emit("webrtc-renegotiate-answer", {
+        roomCode,
+        answer,
+      });
+    });
+
+    socket.on("webrtc-renegotiate-answer", async (answer) => {
+      await peerConnection.setRemoteDescription(
+        new RTCSessionDescription(answer),
+      );
+    });
+
     socket.on("webrtc-offer", async (offer) => {
       if (role !== "CANDIDATE") return;
 
@@ -94,8 +166,9 @@ export function WebRTCProvider({ children, roomCode, role }: WebRTCProviderProps
       }
 
       console.log("Offer Received");
-      await peerConnection.setRemoteDescription(new RTCSessionDescription(offer));
-
+      await peerConnection.setRemoteDescription(
+        new RTCSessionDescription(offer),
+      );
 
       await drainIceCandidates(peerConnection);
 
@@ -108,16 +181,15 @@ export function WebRTCProvider({ children, roomCode, role }: WebRTCProviderProps
     socket.on("webrtc-answer", async (answer) => {
       if (role !== "INTERVIEWER") return;
       console.log("Answer Received");
-      await peerConnection.setRemoteDescription(new RTCSessionDescription(answer));
-
+      await peerConnection.setRemoteDescription(
+        new RTCSessionDescription(answer),
+      );
 
       await drainIceCandidates(peerConnection);
     });
 
-
     socket.on("webrtc-ice-candidate", async (candidate) => {
       if (!peerConnection.remoteDescription) {
-        
         console.log("Queuing ICE candidate (no remote description yet)");
         iceCandidateQueueRef.current.push(candidate);
         return;
@@ -138,7 +210,9 @@ export function WebRTCProvider({ children, roomCode, role }: WebRTCProviderProps
         });
 
         setLocalStream(stream);
-        stream.getTracks().forEach((track) => peerConnection.addTrack(track, stream));
+        stream
+          .getTracks()
+          .forEach((track) => peerConnection.addTrack(track, stream));
 
         setupCompleteRef.current = true;
         console.log("Peer Connection Ready — tracks added");
@@ -155,9 +229,22 @@ export function WebRTCProvider({ children, roomCode, role }: WebRTCProviderProps
       socket.off("webrtc-offer");
       socket.off("webrtc-answer");
       socket.off("webrtc-ice-candidate");
+      socket.off("webrtc-renegotiate-offer");
+
+      socket.off("webrtc-renegotiate-answer");
+
+      const stream = useInterviewStore.getState().localStream;
+
+      stream?.getTracks().forEach((track) => track.stop());
+
+      setLocalStream(null);
+      setRemoteStream(null);
+
+      setPeerConnection(null);
+
       peerConnection.close();
     };
-  }, [roomCode, role, setLocalStream, setRemoteStream]);
+  }, [roomCode, role, setLocalStream, setRemoteStream, setPeerConnection]);
 
   useEffect(() => {
     if (role !== "INTERVIEWER") return;

@@ -1,6 +1,8 @@
 "use client";
 
 import { useEffect } from "react";
+import { useRouter } from "next/navigation";
+
 import { socket } from "@/lib/socket";
 import { useInterviewStore } from "@/store/interview-store";
 
@@ -10,25 +12,68 @@ type SocketProviderProps = {
 };
 
 export function SocketProvider({ roomCode, role }: SocketProviderProps) {
+  const router = useRouter();
+
   const addMessage = useInterviewStore((state) => state.addMessage);
+
   const setCode = useInterviewStore((state) => state.setCode);
+
   const setLanguage = useInterviewStore((state) => state.setLanguage);
-  const setCandidateConnected = useInterviewStore((state) => state.setCandidateConnected);
-  const setInterviewerConnected = useInterviewStore((state) => state.setInterviewerConnected);
-  const setSharedQuestion = useInterviewStore((state) => state.setSharedQuestion);
-  const setInterviewStatus = useInterviewStore((state) => state.setInterviewStatus);
-  const setInterviewStartedAt = useInterviewStore((state) => state.setInterviewStartedAt);
-  const setRemoteActiveView = useInterviewStore((state) => state.setRemoteActiveView);
-  const setCandidateSharing = useInterviewStore((state) => state.setCandidateSharing);
-  const setInterviewerSharing = useInterviewStore((state) => state.setInterviewerSharing);
+
+  const setCandidateConnected = useInterviewStore(
+    (state) => state.setCandidateConnected,
+  );
+
+  const setInterviewerConnected = useInterviewStore(
+    (state) => state.setInterviewerConnected,
+  );
+
+  const setSharedQuestion = useInterviewStore(
+    (state) => state.setSharedQuestion,
+  );
+
+  const setInterviewStatus = useInterviewStore(
+    (state) => state.setInterviewStatus,
+  );
+
+  const setInterviewStartedAt = useInterviewStore(
+    (state) => state.setInterviewStartedAt,
+  );
+
+  const setRemoteActiveView = useInterviewStore(
+    (state) => state.setRemoteActiveView,
+  );
+
+  const setCandidateSharing = useInterviewStore(
+    (state) => state.setCandidateSharing,
+  );
+
+  const setInterviewerSharing = useInterviewStore(
+    (state) => state.setInterviewerSharing,
+  );
+
+  const setRemoteMicEnabled = useInterviewStore(
+    (state) => state.setRemoteMicEnabled,
+  );
+
+  const setRemoteCameraEnabled = useInterviewStore(
+    (state) => state.setRemoteCameraEnabled,
+  );
+
+  const setRemoteScreenStreamId = useInterviewStore(
+    (state) => state.setRemoteScreenStreamId,
+  );
 
   useEffect(() => {
     socket.connect();
 
-    // Single connect handler — rejoins room on every connect/reconnect
     socket.on("connect", () => {
       console.log("Socket Connected:", socket.id);
-      socket.emit("join-room", { roomCode, role });
+
+      socket.emit("join-room", {
+        roomCode,
+        role,
+      });
     });
 
     socket.on("connect_error", (error) => {
@@ -53,26 +98,61 @@ export function SocketProvider({ roomCode, role }: SocketProviderProps) {
 
     socket.on("presence-updated", (presence) => {
       console.log("Presence:", presence);
+
       setCandidateConnected(presence.candidate);
+
       setInterviewerConnected(presence.interviewer);
+
+      const otherUserConnected =
+        role === "INTERVIEWER" ? presence.candidate : presence.interviewer;
+
+      if (!otherUserConnected) {
+        useInterviewStore.getState().setRemoteActiveView("CODE");
+      }
     });
 
     socket.on("interview-started", () => {
       setInterviewStatus("ACTIVE");
+
       setInterviewStartedAt(Date.now());
     });
 
     socket.on("interview-ended", () => {
-      setInterviewStatus("ENDED");
+      useInterviewStore.getState().resetInterviewState();
+
+      if (role === "CANDIDATE") {
+        router.push("/candidate");
+      }
+    });
+
+    socket.on("mic-state-updated", (enabled) => {
+      console.log("REMOTE MIC:", enabled);
+
+      setRemoteMicEnabled(enabled);
+    });
+
+    socket.on("camera-state-updated", (enabled) => {
+      console.log("REMOTE CAMERA:", enabled);
+
+      setRemoteCameraEnabled(enabled);
     });
 
     socket.on("remote-active-view", (view) => {
       setRemoteActiveView(view);
     });
 
-    socket.on("screen-share-state-updated", ({ role, sharing }) => {
-      if (role === "CANDIDATE") setCandidateSharing(sharing);
-      if (role === "INTERVIEWER") setInterviewerSharing(sharing);
+    socket.on("screen-share-state-updated", ({ role, sharing, streamId }) => {
+      if (role === "CANDIDATE") {
+        setCandidateSharing(sharing);
+      }
+      if (role === "INTERVIEWER") {
+        setInterviewerSharing(sharing);
+      }
+      if (sharing && streamId) {
+        setRemoteScreenStreamId(streamId);
+      } else {
+        setRemoteScreenStreamId(null);
+      }
     });
 
     return () => {
@@ -87,22 +167,29 @@ export function SocketProvider({ roomCode, role }: SocketProviderProps) {
       socket.off("interview-ended");
       socket.off("remote-active-view");
       socket.off("screen-share-state-updated");
+      socket.off("mic-state-updated");
+
+      socket.off("camera-state-updated");
+
       socket.disconnect();
     };
   }, [
     roomCode,
     role,
-    setSharedQuestion,
+    router,
+    addMessage,
     setCode,
     setLanguage,
-    addMessage,
     setCandidateConnected,
     setInterviewerConnected,
+    setSharedQuestion,
     setInterviewStatus,
     setInterviewStartedAt,
     setRemoteActiveView,
     setCandidateSharing,
     setInterviewerSharing,
+    setRemoteMicEnabled,
+    setRemoteCameraEnabled,
   ]);
 
   return null;

@@ -3,6 +3,9 @@
 import { useInterviewStore }
   from "@/store/interview-store";
 
+  import { ScreenSharePanel }
+  from "@/components/interview/ScreenSharePanel";
+
 import { VideoSection }
   from "./VideoSection";
 
@@ -18,7 +21,15 @@ import { CodeEditorPanel }
 import { OutputPanel }
   from "@/components/interview/OutputPanel";
 
-export function MainContent() {
+type MainContentProps = {
+  currentUserRole:
+    | "INTERVIEWER"
+    | "CANDIDATE";
+};
+
+export function MainContent({
+  currentUserRole,
+}: MainContentProps) {
   const activeView =
     useInterviewStore(
       (state) =>
@@ -44,18 +55,18 @@ export function MainContent() {
         )}
 
         {activeView ===
-          "INTERVIEWER_SCREEN" && (
-          <div className="flex h-full items-center justify-center rounded-xl border bg-card">
-            Interviewer Screen
-          </div>
-        )}
+  "INTERVIEWER_SCREEN" && (
+  <ScreenSharePanel
+  role={currentUserRole}
+/>
+)}
 
-        {activeView ===
-          "CANDIDATE_SCREEN" && (
-          <div className="flex h-full items-center justify-center rounded-xl border bg-card">
-            Candidate Screen
-          </div>
-        )}
+{activeView ===
+  "CANDIDATE_SCREEN" && (
+  <ScreenSharePanel
+  role={currentUserRole}
+/>
+)}
       </div>
     </div>
   );

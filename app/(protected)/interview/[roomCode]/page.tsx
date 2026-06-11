@@ -75,7 +75,9 @@ export default async function InterviewPage({
   roomCode={roomCode}
   role={role}
 >
-  <MainContent />
+  <MainContent
+  currentUserRole={role}
+/>
 </WebRTCProvider>
     </AppShell>
   );

@@ -4,6 +4,7 @@ import { logout } from "@/app/actions/auth-actions";
 import { ThemeToggle } from "./ThemeToggle";
 import { Logo } from "@/components/common/Logo";
 import { PresenceIndicator } from "./PresenceIndicator";
+import Link from "next/link";
 
 import {
   Avatar,
@@ -35,7 +36,9 @@ export async function TopBar({
   return (
     <header className="flex h-16 items-center justify-between border-b border-border px-6">
       <div className="flex items-center gap-4">
-        <Logo />
+         <Link href="/">
+    <Logo />
+  </Link>
 
         {roomCode && (
           <div className="rounded-md border px-3 py-1 text-sm text-muted-foreground">

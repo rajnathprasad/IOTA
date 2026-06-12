@@ -25,6 +25,11 @@ export default async function HomePage() {
         <p className="mt-4 max-w-2xl text-muted-foreground">
           <b>Everything you need for technical interviews</b><br/> Live Coding, Video Communication, AI-Assisted Questions, and Proctoring.
         </p>
+
+        <p className="mt-2 text-sm text-yellow-500">
+  Use separate devices for Interviewer and Candidate testing.
+</p>
+
         <div className="mt-8 flex gap-4">
           <Button asChild>
             <Link href="/login">Login</Link>

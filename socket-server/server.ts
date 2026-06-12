@@ -1,13 +1,15 @@
 import { Server } from "socket.io";
 
-const io = new Server(3001, {
+const PORT = Number(process.env.PORT) || 3001;
+
+const io = new Server(PORT, {
   cors: {
     origin: "*",
   },
 });
 
 console.log(
-  "Socket Server Running on Port 3001"
+  `Socket Server Running on Port ${PORT}`
 );
 
 const roomUsers = new Map<

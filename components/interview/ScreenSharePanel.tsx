@@ -27,8 +27,22 @@ export function ScreenSharePanel({ role }: ScreenSharePanelProps) {
 
 
   const displayStream =
-    localScreenStream ??
-    (role === "INTERVIEWER" ? remoteCandidateScreenStream : remoteInterviewerScreenStream);
+  activeView ===
+  "CANDIDATE_SCREEN"
+    ? (
+        localScreenStream &&
+        role ===
+          "CANDIDATE"
+      )
+        ? localScreenStream
+        : remoteCandidateScreenStream
+    : (
+        localScreenStream &&
+        role ===
+          "INTERVIEWER"
+      )
+        ? localScreenStream
+        : remoteInterviewerScreenStream;
 
   useEffect(() => {
   const video = videoRef.current;
@@ -39,8 +53,9 @@ export function ScreenSharePanel({ role }: ScreenSharePanelProps) {
     return;
   }
 
+  if (video.srcObject !== displayStream) {
   video.srcObject = displayStream;
-  video.play().catch(console.error);
+}
 }, [displayStream]);
 
   async function startSharing() {

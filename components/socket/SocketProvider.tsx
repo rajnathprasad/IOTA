@@ -72,6 +72,18 @@ export function SocketProvider({ roomCode, role }: SocketProviderProps) {
     (state) => state.setRemoteScreenStreamId,
   );
 
+  const setRemoteCandidateScreenStream =
+  useInterviewStore(
+    (s) =>
+      s.setRemoteCandidateScreenStream
+  );
+
+const setRemoteInterviewerScreenStream =
+  useInterviewStore(
+    (s) =>
+      s.setRemoteInterviewerScreenStream
+  );
+
   useEffect(() => {
   let leftAt = 0;
 
@@ -210,19 +222,55 @@ export function SocketProvider({ roomCode, role }: SocketProviderProps) {
       setRemoteActiveView(view);
     });
 
-    socket.on("screen-share-state-updated", ({ role, sharing, streamId }) => {
-      if (role === "CANDIDATE") {
-        setCandidateSharing(sharing);
+    socket.on(
+  "screen-share-state-updated",
+  ({
+    role,
+    sharing,
+    streamId,
+  }) => {
+    if (
+      role === "CANDIDATE"
+    ) {
+      setCandidateSharing(
+        sharing
+      );
+
+      if (!sharing) {
+        setRemoteCandidateScreenStream(
+          null
+        );
       }
-      if (role === "INTERVIEWER") {
-        setInterviewerSharing(sharing);
+    }
+
+    if (
+      role === "INTERVIEWER"
+    ) {
+      setInterviewerSharing(
+        sharing
+      );
+
+      if (!sharing) {
+        setRemoteInterviewerScreenStream(
+          null
+        );
       }
-      if (sharing && streamId) {
-        setRemoteScreenStreamId(streamId);
-      } else {
-        setRemoteScreenStreamId(null);
-      }
-    });
+    }
+
+    if (
+      sharing &&
+      streamId
+    ) {
+      setRemoteScreenStreamId(
+        streamId
+      );
+    } else {
+      setRemoteScreenStreamId(
+        null
+      );
+    }
+  }
+);
 
     socket.on(
   "tab-switch-updated",

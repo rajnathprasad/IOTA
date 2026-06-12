@@ -5,49 +5,41 @@ import { useInterviewStore }
 
 export function ProctoringPanel() {
   const tabSwitches =
-    useInterviewStore(
-      (state) =>
-        state.tabSwitches
-    );
+  useInterviewStore(
+    (state) =>
+      state.tabSwitches
+  ).slice(0, 5);
 
   return (
-    <div className="space-y-4">
-      <div>
-        <p className="text-sm text-muted-foreground">
-          Switches
-        </p>
+  <div className="space-y-2">
+    <div>
+      <p className="text-xs text-muted-foreground">
+        Switches
+      </p>
 
-        <p className="text-2xl font-bold">
-          {tabSwitches.length}
-        </p>
-      </div>
-
-      <div>
-        <div className="space-y-1">
-  {tabSwitches.length === 0 && (
-    <p className="text-sm text-muted-foreground">
-      No tab switches detected.
-    </p>
-  )}
-
-  {tabSwitches.map(
-    (event, index) => (
-      <div
-        key={index}
-        className="
-          text-sm
-          text-muted-foreground
-        "
-      >
-        • Tab switched for{" "}
-        <span className="font-medium text-foreground">
-          {event.duration}s
-        </span>
-      </div>
-    )
-  )}
-</div>
-      </div>
+      <p className="text-xl font-bold leading-none">
+        {tabSwitches.length}
+      </p>
     </div>
-  );
+
+    <div className="space-y-1">
+      {tabSwitches.length === 0 && (
+        <p className="text-xs text-muted-foreground">
+          No tab switches detected.
+        </p>
+      )}
+
+      {tabSwitches.map(
+        (event, index) => (
+          <div
+            key={index}
+            className="text-xs text-muted-foreground"
+          >
+            • {event.duration}s
+          </div>
+        )
+      )}
+    </div>
+  </div>
+);
 }

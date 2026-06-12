@@ -1,15 +1,5 @@
-import {
-  Accordion,
-  AccordionContent,
-  AccordionItem,
-  AccordionTrigger,
-} from "@/components/ui/accordion";
-import { ChatPanel }
-  from "@/components/chat/ChatPanel";
-
-import { ProctoringPanel }
-  from "@/components/proctoring/ProctoringPanel";
-
+import { ChatPanel } from "@/components/chat/ChatPanel";
+import { ProctoringCompact } from "@/components/proctoring/ProctoringCompact";
 
 type CandidateRightPanelProps = {
   currentUserName: string;
@@ -20,39 +10,20 @@ export function CandidateRightPanel({
 }: CandidateRightPanelProps) {
   return (
     <aside className="h-full overflow-hidden border-l border-border bg-card">
-      <div className="h-full overflow-y-auto p-4">
-        <Accordion
-          type="multiple"
-          defaultValue={["proctoring", "chat"]}
-          className="w-full"
-        >
+      <div className="flex h-full flex-col gap-3 p-3">
 
-          <AccordionItem value="proctoring">
-            <AccordionTrigger>
-              Proctoring
-            </AccordionTrigger>
+        <ProctoringCompact />
 
-            <AccordionContent>
-              <div className="max-h-64 overflow-y-auto">
-                <ProctoringPanel />
-              </div>
-            </AccordionContent>
-          </AccordionItem>
+        <section className="flex min-h-0 flex-1 flex-col rounded-lg border">
+          <div className="shrink-0 border-b px-4 py-3 font-medium">
+            Chat
+          </div>
 
-          <AccordionItem value="chat">
-            <AccordionTrigger>
-              Chat
-            </AccordionTrigger>
+          <div className="min-h-0 flex-1 overflow-hidden p-2">
+            <ChatPanel currentUserName={currentUserName} />
+          </div>
+        </section>
 
-            <AccordionContent>
-              <div className="h-105">
-                <ChatPanel
-  currentUserName={currentUserName}
-/>
-              </div>
-            </AccordionContent>
-          </AccordionItem>
-        </Accordion>
       </div>
     </aside>
   );

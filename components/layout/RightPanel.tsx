@@ -1,69 +1,37 @@
-import {
-  Accordion,
-  AccordionContent,
-  AccordionItem,
-  AccordionTrigger,
-} from "@/components/ui/accordion";
-import { ChatPanel }
-  from "@/components/chat/ChatPanel";
-
+import { ChatPanel } from "@/components/chat/ChatPanel";
 import { AIQuestionPanel } from "../interview/AIQuestionPanel";
+import { ProctoringCompact } from "@/components/proctoring/ProctoringCompact";
 
-
-import { ProctoringPanel }
-  from "@/components/proctoring/ProctoringPanel";
 type RightPanelProps = {
   currentUserName: string;
 };
 
-export function RightPanel({
-  currentUserName,
-}: RightPanelProps) {
+export function RightPanel({ currentUserName }: RightPanelProps) {
   return (
     <aside className="h-full overflow-hidden border-l border-border bg-card">
-      <div className="h-full overflow-y-auto p-4">
-        <Accordion
-          type="multiple"
-          className="w-full"
-        >
-          <AccordionItem value="ai">
-            <AccordionTrigger>
-              AI Questions
-            </AccordionTrigger>
+      <div className="grid h-full overflow-hidden grid-rows-[1fr_auto_1fr] gap-3 p-3">
 
-            <AccordionContent>
-              <div className="max-h-64 overflow-y-auto pr-1">
-                <AIQuestionPanel />
-              </div>
-            </AccordionContent>
-          </AccordionItem>
+        <section className="flex min-h-0 flex-col rounded-lg border">
+          <div className="shrink-0 border-b px-4 py-3 font-medium">
+            Find Questions Through AI
+          </div>
+          <div className="min-h-0 flex-1 overflow-y-auto p-2 scrollbar-hide">
+            <AIQuestionPanel />
+          </div>
+        </section>
 
-          <AccordionItem value="proctoring">
-            <AccordionTrigger>
-              Proctoring
-            </AccordionTrigger>
 
-            <AccordionContent>
-              <div className="max-h-64 overflow-y-auto">
-                <ProctoringPanel />
-              </div>
-            </AccordionContent>
-          </AccordionItem>
+        <ProctoringCompact />
 
-          <AccordionItem value="chat">
-            <AccordionTrigger>
-              Chat
-            </AccordionTrigger>
+        <section className="flex min-h-0 flex-col rounded-lg border">
+          <div className="shrink-0 border-b px-4 py-3 font-medium">
+            Chat
+          </div>
+          <div className="min-h-0 flex-1 overflow-hidden p-2">
+            <ChatPanel currentUserName={currentUserName} />
+          </div>
+        </section>
 
-            <AccordionContent>
-              <div className="h-105">
-                <ChatPanel
-  currentUserName={currentUserName}
-/>
-              </div>
-            </AccordionContent>
-          </AccordionItem>
-        </Accordion>
       </div>
     </aside>
   );

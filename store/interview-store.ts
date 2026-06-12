@@ -2,7 +2,15 @@ import { create } from "zustand";
 import type { InterviewQuestion } from "@/components/interview/types";
 import type { ChatMessage } from "@/components/chat/types";
 
+type TabSwitchEvent = {
+  leftAt: number;
+  returnedAt: number;
+  duration: number;
+};
+
 type InterviewStore = {
+  tabSwitches: TabSwitchEvent[];
+  addTabSwitch: (event: TabSwitchEvent) => void;
   sharedQuestion: InterviewQuestion | null;
   language: string;
   code: string;
@@ -46,13 +54,18 @@ type InterviewStore = {
   setOutput: (output: string) => void;
   setMessages: (messages: ChatMessage[]) => void;
   addMessage: (message: ChatMessage) => void;
+
   setCandidateConnected: (connected: boolean) => void;
   setInterviewerConnected: (connected: boolean) => void;
   setCandidateSharing: (sharing: boolean) => void;
   setInterviewerSharing: (sharing: boolean) => void;
   setInterviewStatus: (status: "WAITING" | "ACTIVE" | "ENDED") => void;
-  setActiveView: (view: "CODE" | "INTERVIEWER_SCREEN" | "CANDIDATE_SCREEN") => void;
-  setRemoteActiveView: (view: "CODE" | "INTERVIEWER_SCREEN" | "CANDIDATE_SCREEN") => void;
+  setActiveView: (
+    view: "CODE" | "INTERVIEWER_SCREEN" | "CANDIDATE_SCREEN",
+  ) => void;
+  setRemoteActiveView: (
+    view: "CODE" | "INTERVIEWER_SCREEN" | "CANDIDATE_SCREEN",
+  ) => void;
   resetInterviewState: () => void;
 };
 
@@ -65,11 +78,12 @@ export const useInterviewStore = create<InterviewStore>((set) => ({
   interviewerConnected: false,
   candidateSharing: false,
   interviewerSharing: false,
-  remoteScreenStreamId: null,        // ← was missing
+  remoteScreenStreamId: null, // ← was missing
   peerConnection: null,
   interviewStatus: "WAITING",
   activeView: "CODE",
   remoteActiveView: "CODE",
+  tabSwitches: [],
   messages: [],
   interviewStartedAt: null,
   localStream: null,
@@ -82,16 +96,22 @@ export const useInterviewStore = create<InterviewStore>((set) => ({
   remoteInterviewerScreenStream: null,
   remoteCandidateScreenStream: null,
 
-  setRemoteScreenStreamId: (id) => set({ remoteScreenStreamId: id }), 
+  setRemoteScreenStreamId: (id) => set({ remoteScreenStreamId: id }),
   setPeerConnection: (peerConnection) => set({ peerConnection }),
   setSharedQuestion: (question) => set({ sharedQuestion: question }),
   setLanguage: (language) => set({ language }),
   setCode: (code) => set({ code }),
   setOutput: (output) => set({ output }),
   setMessages: (messages) => set({ messages }),
-  addMessage: (message) => set((state) => ({ messages: [...state.messages, message] })),
+  addMessage: (message) =>
+    set((state) => ({ messages: [...state.messages, message] })),
+  addTabSwitch: (event) =>
+    set((state) => ({
+      tabSwitches: [event, ...state.tabSwitches],
+    })),
   setCandidateConnected: (connected) => set({ candidateConnected: connected }),
-  setInterviewerConnected: (connected) => set({ interviewerConnected: connected }),
+  setInterviewerConnected: (connected) =>
+    set({ interviewerConnected: connected }),
   setCandidateSharing: (sharing) => set({ candidateSharing: sharing }),
   setInterviewerSharing: (sharing) => set({ interviewerSharing: sharing }),
   setInterviewStatus: (status) => set({ interviewStatus: status }),
@@ -105,24 +125,39 @@ export const useInterviewStore = create<InterviewStore>((set) => ({
   setRemoteMicEnabled: (enabled) => set({ remoteMicEnabled: enabled }),
   setRemoteCameraEnabled: (enabled) => set({ remoteCameraEnabled: enabled }),
   setLocalScreenStream: (stream) => set({ localScreenStream: stream }),
-  setRemoteInterviewerScreenStream: (stream) => set({ remoteInterviewerScreenStream: stream }),
-  setRemoteCandidateScreenStream: (stream) => set({ remoteCandidateScreenStream: stream }),
+  setRemoteInterviewerScreenStream: (stream) =>
+    set({ remoteInterviewerScreenStream: stream }),
+  setRemoteCandidateScreenStream: (stream) =>
+    set({ remoteCandidateScreenStream: stream }),
 
   resetInterviewState: () =>
     set({
       interviewStatus: "WAITING",
+
       interviewStartedAt: null,
+
+      tabSwitches: [],
+
       micEnabled: true,
       cameraEnabled: true,
+
       remoteMicEnabled: true,
       remoteCameraEnabled: true,
+
       localScreenStream: null,
+
       remoteInterviewerScreenStream: null,
+
       remoteCandidateScreenStream: null,
-      remoteScreenStreamId: null,    // ← was missing
+
+      remoteScreenStreamId: null,
+
       candidateConnected: false,
+
       interviewerConnected: false,
+
       candidateSharing: false,
+
       interviewerSharing: false,
     }),
 }));

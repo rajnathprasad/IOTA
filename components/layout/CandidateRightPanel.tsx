@@ -7,7 +7,10 @@ import {
 import { ChatPanel }
   from "@/components/chat/ChatPanel";
 
-import { AIQuestionPanel } from "../interview/AIQuestionPanel";
+import { ProctoringPanel }
+  from "@/components/proctoring/ProctoringPanel";
+
+
 type CandidateRightPanelProps = {
   currentUserName: string;
 };
@@ -31,9 +34,7 @@ export function CandidateRightPanel({
 
             <AccordionContent>
               <div className="max-h-64 overflow-y-auto">
-                <p className="text-sm text-muted-foreground">
-                  Waiting for interview.
-                </p>
+                <ProctoringPanel />
               </div>
             </AccordionContent>
           </AccordionItem>

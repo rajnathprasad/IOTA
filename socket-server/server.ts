@@ -216,6 +216,21 @@ io.on("connection", (socket) => {
   );
 
   socket.on(
+  "tab-switch",
+  ({
+    roomCode,
+    event,
+  }) => {
+    socket
+      .to(roomCode)
+      .emit(
+        "tab-switch-updated",
+        event
+      );
+  }
+);
+
+  socket.on(
     "webrtc-offer",
     ({ roomCode, offer }) => {
       console.log(

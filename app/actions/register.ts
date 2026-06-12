@@ -1,23 +1,22 @@
 "use server";
 
-import bcrypt from "bcryptjs";
 import { prisma } from "@/lib/prisma";
-import { UserRole } from "@/lib/generated/prisma/enums";
+import { redirect } from "next/navigation";
+import bcrypt from "bcryptjs";
+import { signIn } from "@/auth";
 
 export async function registerUser(
   name: string,
   email: string,
   password: string,
-  role: UserRole
+  role: "CANDIDATE" | "INTERVIEWER"
 ) {
   const existingUser = await prisma.user.findUnique({
-    where: {
-      email,
-    },
+    where: { email },
   });
 
   if (existingUser) {
-    throw new Error("User already exists");
+    throw new Error("An account with this email already exists.");
   }
 
   const passwordHash = await bcrypt.hash(password, 10);
@@ -31,7 +30,10 @@ export async function registerUser(
     },
   });
 
-  return {
-    success: true,
-  };
+
+  await signIn("credentials", {
+    email,
+    password,
+    redirectTo: "/dashboard",
+  });
 }

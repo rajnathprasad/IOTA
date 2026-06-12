@@ -1,61 +1,53 @@
-import { registerUser } from "@/app/actions/register";
+import { auth } from "@/auth";
+import { redirect } from "next/navigation";
+import { RegisterForm } from "@/components/auth/RegisterForm";
+import { GoogleSignInButton } from "@/components/auth/GoogleSignInButton";
+import { TopBar } from "@/components/layout/TopBar";
 
-export default function RegisterPage() {
+export default async function RegisterPage() {
+  const session = await auth();
+
+  if (session?.user) {
+    if (!session.user.role) redirect("/complete-profile");
+    if (session.user.role === "INTERVIEWER") redirect("/interviewer");
+    redirect("/candidate");
+  }
+
   return (
-    <div className="flex min-h-screen items-center justify-center p-6">
-      <form
-        action={async (formData) => {
-          "use server";
+  <div className="min-h-screen bg-background">
+    <TopBar />
 
-          const name = formData.get("name") as string;
-          const email = formData.get("email") as string;
-          const password = formData.get("password") as string;
+    <div className="flex items-center justify-center px-6 py-12">
+      <div className="flex w-full max-w-sm flex-col gap-6 rounded-xl border p-6">
+        <div>
+          <h1 className="text-2xl font-semibold">
+            Create account
+          </h1>
 
-          const role = formData.get("role") as "CANDIDATE" | "INTERVIEWER";
+          <p className="mt-1 text-sm text-muted-foreground">
+            Already have an account?{" "}
+            <a
+              href="/login"
+              className="text-foreground underline underline-offset-4"
+            >
+              Sign in
+            </a>
+          </p>
+        </div>
 
-          await registerUser(name, email, password, role);
-        }}
-        className="flex w-full max-w-sm flex-col gap-4 rounded-xl border p-6"
-      >
-        <h1 className="text-2xl font-semibold">Create Account</h1>
+        <GoogleSignInButton />
 
-        <input
-          name="name"
-          placeholder="Name"
-          required
-          className="rounded-md border bg-background px-3 py-2"
-        />
+        <div className="flex items-center gap-3">
+          <div className="h-px flex-1 bg-border" />
+          <span className="text-xs text-muted-foreground">
+            or continue with email
+          </span>
+          <div className="h-px flex-1 bg-border" />
+        </div>
 
-        <input
-          name="email"
-          type="email"
-          placeholder="Email"
-          required
-          className="rounded-md border bg-background px-3 py-2"
-        />
-
-        <input
-          name="password"
-          type="password"
-          placeholder="Password"
-          required
-          className="rounded-md border bg-background px-3 py-2"
-        />
-
-        <select
-          name="role"
-          defaultValue="CANDIDATE"
-          className="rounded-md border bg-background px-3 py-2"
-        >
-          <option value="CANDIDATE">Candidate</option>
-
-          <option value="INTERVIEWER">Interviewer</option>
-        </select>
-
-        <button type="submit" className="rounded-md border px-3 py-2">
-          Create Account
-        </button>
-      </form>
+        <RegisterForm />
+      </div>
     </div>
-  );
+  </div>
+);
 }

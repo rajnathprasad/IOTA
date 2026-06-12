@@ -38,9 +38,9 @@ export function MainContent({
 
   return (
     <div className="flex h-full flex-col gap-4">
-      <div className="h-[25%]">
-        <VideoSection />
-      </div>
+      <div className="h-[200px] shrink-0">
+  <VideoSection />
+</div>
 
       <WorkspaceTabs />
 

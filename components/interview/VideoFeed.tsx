@@ -38,7 +38,7 @@ const remoteCameraEnabled =
     const stream = streamType === "LOCAL" ? localStream : remoteStream;
     if (!stream) return;
 
-    // Only reassign if the stream actually changed
+  
     if (video.srcObject === stream) return;
 
     video.srcObject = stream;
@@ -63,7 +63,7 @@ const remoteCameraEnabled =
   }, [localStream, remoteStream, streamType, label]);
 
   return (
-    <div className="relative h-full overflow-hidden rounded-xl border bg-card">
+    <div className="relative h-full overflow-hidden rounded-xl border bg-card aspect-video">
       <video
         ref={videoRef}
         autoPlay

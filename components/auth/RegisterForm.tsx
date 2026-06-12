@@ -1,45 +1,53 @@
 "use client";
 
-import { signIn } from "next-auth/react";
 import { useState } from "react";
+import { registerUser } from "@/app/actions/register";
 
-export function LoginForm() {
+export function RegisterForm() {
   const [loading, setLoading] = useState(false);
-  const [error, setError] = useState("");
+  const [error, setError] = useState<string | null>(null);
 
-  async function handleSubmit(
-    e: React.FormEvent<HTMLFormElement>
-  ) {
+  async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
-
-    setError("");
+    setError(null);
     setLoading(true);
 
     const formData = new FormData(e.currentTarget);
-
+    const name = formData.get("name") as string;
     const email = formData.get("email") as string;
     const password = formData.get("password") as string;
+    const role = formData.get("role") as "CANDIDATE" | "INTERVIEWER";
 
-    const result = await signIn("credentials", {
-      email,
-      password,
-      redirect: false,
-    });
+    try {
+      await registerUser(name, email, password, role);
+    } catch (err: unknown) {
+  if (
+    err instanceof Error &&
+    err.message.includes("NEXT_REDIRECT")
+  ) {
+    throw err;
+  }
 
-    if (result?.error) {
-      setError("Invalid email or password");
-      setLoading(false);
-      return;
-    }
+  setError(
+    err instanceof Error
+      ? err.message
+      : "Something went wrong"
+  );
 
-    window.location.replace("/dashboard");
+  setLoading(false);
+}
   }
 
   return (
-    <form
-      onSubmit={handleSubmit}
-      className="flex flex-col gap-3"
-    >
+    <form onSubmit={handleSubmit} className="flex flex-col gap-3">
+      <input
+        name="name"
+        placeholder="Full name"
+        required
+        disabled={loading}
+        className="rounded-md border bg-background px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-ring disabled:opacity-50"
+      />
+
       <input
         name="email"
         type="email"
@@ -58,6 +66,16 @@ export function LoginForm() {
         className="rounded-md border bg-background px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-ring disabled:opacity-50"
       />
 
+      <select
+        name="role"
+        defaultValue="CANDIDATE"
+        disabled={loading}
+        className="rounded-md border bg-background px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-ring disabled:opacity-50"
+      >
+        <option value="CANDIDATE">Candidate</option>
+        <option value="INTERVIEWER">Interviewer</option>
+      </select>
+
       {error && (
         <p className="rounded-md bg-destructive/10 px-3 py-2 text-sm text-destructive">
           {error}
@@ -72,10 +90,10 @@ export function LoginForm() {
         {loading ? (
           <>
             <Spinner />
-            Logging in...
+            Creating account…
           </>
         ) : (
-          "Login"
+          "Create account"
         )}
       </button>
     </form>
@@ -92,9 +110,7 @@ function Spinner() {
     >
       <circle
         className="opacity-25"
-        cx="12"
-        cy="12"
-        r="10"
+        cx="12" cy="12" r="10"
         stroke="currentColor"
         strokeWidth="4"
       />

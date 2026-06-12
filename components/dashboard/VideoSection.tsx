@@ -1,10 +1,8 @@
-import { VideoFeed }
-  from "../interview/VideoFeed";
+import { VideoFeed } from "../interview/VideoFeed";
 
 export function VideoSection() {
   return (
-    <div className="grid h-full grid-cols-2 gap-4">
-
+    <div className="flex h-full items-center justify-center gap-6">
       <VideoFeed
         label="Your Camera"
         streamType="LOCAL"
@@ -14,7 +12,6 @@ export function VideoSection() {
         label="Remote Camera"
         streamType="REMOTE"
       />
-
     </div>
   );
 }

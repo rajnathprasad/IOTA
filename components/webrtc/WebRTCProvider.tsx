@@ -74,6 +74,9 @@ export function WebRTCProvider({
       ],
       iceCandidatePoolSize: 10,
     });
+
+    setupCompleteRef.current = false;
+offerCreatedRef.current = false;
     peerConnectionRef.current = peerConnection;
 
     setPeerConnection(peerConnection);
@@ -202,48 +205,91 @@ export function WebRTCProvider({
       }
     });
 
+    let cancelled = false;
+
     async function setup() {
-      try {
-        const stream = await navigator.mediaDevices.getUserMedia({
-          video: true,
-          audio: true,
-        });
+  try {
+    const stream =
+      await navigator.mediaDevices.getUserMedia({
+        video: true,
+        audio: true,
+      });
 
-        setLocalStream(stream);
-        stream
-          .getTracks()
-          .forEach((track) => peerConnection.addTrack(track, stream));
+    if (cancelled) {
+      stream
+        .getTracks()
+        .forEach((track) => track.stop());
 
-        setupCompleteRef.current = true;
-        console.log("Peer Connection Ready — tracks added");
-
-        peerConnection.dispatchEvent(new Event("setup-complete"));
-      } catch (err) {
-        console.error("getUserMedia failed:", err);
-      }
+      return;
     }
+
+    setLocalStream(stream);
+
+    stream.getTracks().forEach((track) => {
+      if (
+        peerConnection.signalingState ===
+        "closed"
+      ) {
+        console.warn(
+          "Skipping addTrack: PeerConnection already closed"
+        );
+        return;
+      }
+
+      peerConnection.addTrack(
+        track,
+        stream
+      );
+    });
+
+    setupCompleteRef.current =
+      true;
+
+    console.log(
+      "Peer Connection Ready — tracks added"
+    );
+
+    peerConnection.dispatchEvent(
+      new Event("setup-complete")
+    );
+  } catch (err) {
+    console.error(
+      "getUserMedia failed:",
+      err
+    );
+  }
+}
 
     setup();
 
     return () => {
-      socket.off("webrtc-offer");
-      socket.off("webrtc-answer");
-      socket.off("webrtc-ice-candidate");
-      socket.off("webrtc-renegotiate-offer");
+  cancelled = true;
 
-      socket.off("webrtc-renegotiate-answer");
+  socket.off("webrtc-offer");
+  socket.off("webrtc-answer");
+  socket.off("webrtc-ice-candidate");
+  socket.off("webrtc-renegotiate-offer");
+  socket.off("webrtc-renegotiate-answer");
 
-      const stream = useInterviewStore.getState().localStream;
+  const stream =
+    useInterviewStore.getState().localStream;
 
-      stream?.getTracks().forEach((track) => track.stop());
+  stream?.getTracks().forEach(
+    (track) => track.stop()
+  );
 
-      setLocalStream(null);
-      setRemoteStream(null);
+  setLocalStream(null);
+  setRemoteStream(null);
 
-      setPeerConnection(null);
+  setPeerConnection(null);
 
-      peerConnection.close();
-    };
+  if (
+    peerConnection.signalingState !==
+    "closed"
+  ) {
+    peerConnection.close();
+  }
+};
   }, [roomCode, role, setLocalStream, setRemoteStream, setPeerConnection]);
 
   useEffect(() => {

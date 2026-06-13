@@ -8,11 +8,7 @@ import { HeroLogo } from "@/components/common/HeroLogo";
 export default async function HomePage() {
   const session = await auth();
 
-  if (session?.user) {
-    if (!session.user.role) redirect("/complete-profile");
-    if (session.user.role === "INTERVIEWER") redirect("/interviewer");
-    redirect("/candidate");
-  }
+
 
   return (
     <main className="flex min-h-screen flex-col bg-background text-foreground">

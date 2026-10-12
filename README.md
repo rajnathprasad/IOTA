@@ -112,27 +112,27 @@ iota/
 ## 👥 User Roles & Workflow
 
 ```mermaid
-graph TD
+flowchart TD
     User([User Visits Platform]) --> Auth{Authenticated?}
-    Auth -- No --> AuthPage[Login / Register]
+    Auth -- No --> AuthPage["Login / Register"]
     AuthPage --> Auth
     Auth -- Yes --> RoleCheck{Role Assigned?}
-    RoleCheck -- No --> CompleteProfile[/complete-profile]
-    CompleteProfile --> DashboardRouter[/dashboard]
+    RoleCheck -- No --> CompleteProfile["/complete-profile"]
+    CompleteProfile --> DashboardRouter["/dashboard"]
     RoleCheck -- Yes --> DashboardRouter
 
     DashboardRouter --> RoleDecision{User Role}
-    RoleDecision -- CANDIDATE --> CandidateHome[/candidate]
-    RoleDecision -- INTERVIEWER --> InterviewerHome[/interviewer]
+    RoleDecision -- CANDIDATE --> CandidateHome["/candidate"]
+    RoleDecision -- INTERVIEWER --> InterviewerHome["/interviewer"]
 
-    InterviewerHome --> CreateRoom[Create Interview Room]
-    CreateRoom --> RoomCode[Generates 6-Char Code]
-    RoomCode --> RoomInterviewer[/interview/ROOM_CODE]
+    InterviewerHome --> CreateRoom["Create Interview Room"]
+    CreateRoom --> RoomCode["Generates 6-Char Code"]
+    RoomCode --> RoomInterviewer["/interview/ROOM_CODE"]
 
-    CandidateHome --> EnterCode[Enter Room Code]
-    EnterCode --> RoomCandidate[/interview/ROOM_CODE]
+    CandidateHome --> EnterCode["Enter Room Code"]
+    EnterCode --> RoomCandidate["/interview/ROOM_CODE"]
 
-    RoomInterviewer <--> SocketSignaling((Socket.IO & WebRTC))
+    RoomInterviewer <--> SocketSignaling(("Socket.IO & WebRTC"))
     RoomCandidate <--> SocketSignaling
 ```
 
